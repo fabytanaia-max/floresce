@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Floresce · Diário da gestação</title>
+  <meta name="description" content="App premium para acompanhar cada semana da sua gestação. Tamanho do bebê, marcos, diário e mensagens do parceiro." />
+  <meta name="theme-color" content="#1a1424" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Floresce" />
+
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./styles.css?v=2" />
+</head>
+<body>
+  <!-- Ambient backdrop -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+  <div class="ambient ambient-c" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       ONBOARDING (only shown if no data)
+       ============================================================ -->
+  <section id="onboarding" class="onboarding" hidden>
+    <div class="onboarding__inner">
+      <p class="kicker">Bem-vinda ao Floresce</p>
+      <h1 class="display">
+        Cada semana,<br /><em>uma descoberta.</em>
+      </h1>
+      <p class="lead">
+        Acompanhe a jornada do seu bebê com elegância. Tamanho semanal, marcos importantes,
+        diário pessoal e um espaço pro parceiro deixar mensagens.
+      </p>
+
+      <form id="onboardingForm" class="onboarding__form">
+        <label class="field">
+          <span>Nome do bebê (ou apelido)</span>
+          <input id="onbBabyName" type="text" placeholder="Ex.: Joaquim, Bebê, Luna..." maxlength="32" required />
+        </label>
+
+        <label class="field">
+          <span>Data prevista de parto (DPP)</span>
+          <input id="onbDueDate" type="date" required />
+        </label>
+
+        <label class="field">
+          <span>Seu nome <span class="field__optional">(opcional)</span></span>
+          <input id="onbMomName" type="text" placeholder="Como prefere ser chamada" maxlength="32" />
+        </label>
+
+        <label class="field">
+          <span>Nome do parceiro <span class="field__optional">(opcional)</span></span>
+          <input id="onbPartnerName" type="text" placeholder="Quem vai deixar mensagens" maxlength="32" />
+        </label>
+
+        <button type="submit" class="btn btn--primary btn--lg">
+          Começar
+          <span aria-hidden="true">→</span>
+        </button>
+
+        <p class="onboarding__note">
+          Tudo fica salvo apenas no seu dispositivo. Sem conta, sem servidor, sem rastreio.
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MAIN APP
+       ============================================================ -->
+  <main id="app" class="app" hidden>
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar__brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="22" height="22">
+            <path d="M16 4 C 10 10, 7 16, 16 28 C 25 16, 22 10, 16 4 Z" fill="currentColor" opacity="0.95"/>
+            <circle cx="16" cy="14" r="1.6" fill="#1a1424"/>
+          </svg>
+        </span>
+        <span class="brand-name">Floresce</span>
+      </div>
+      <button id="settingsBtn" class="icon-btn" aria-label="Configurações">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero reveal">
+      <p class="hero__greeting" id="heroGreeting">Olá</p>
+      <h1 class="hero__name">
+        <span id="babyNameDisplay">Bebê</span>
+        <span class="hero__name-meta" id="trimesterLabel">— em formação</span>
+      </h1>
+
+      <div class="hero__countdown">
+        <div class="countdown">
+          <span class="countdown__num" id="daysLeft">--</span>
+          <span class="countdown__label">dias até a chegada</span>
+        </div>
+        <p class="hero__due" id="dueText">Defina a data prevista.</p>
+      </div>
+
+      <!-- Trimester timeline -->
+      <div class="trimesters">
+        <div class="trimesters__track">
+          <div class="trimesters__fill" id="trimesterFill" style="width:0%"></div>
+        </div>
+        <div class="trimesters__labels">
+          <button class="tri-label" data-tri="1">
+            <span>1º trim.</span>
+            <strong>Formação</strong>
+          </button>
+          <button class="tri-label" data-tri="2">
+            <span>2º trim.</span>
+            <strong>Desenvolvimento</strong>
+          </button>
+          <button class="tri-label" data-tri="3">
+            <span>3º trim.</span>
+            <strong>Preparação</strong>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- This Week — fruit/size card -->
+    <section class="card week-card reveal" data-delay="80">
+      <div class="card__head">
+        <p class="card__kicker">Esta semana</p>
+        <h2 class="card__title" id="weekTitle">Semana --</h2>
+      </div>
+
+      <div class="week-card__body">
+        <div class="week-card__fruit">
+          <div class="fruit-emoji" id="fruitEmoji" aria-hidden="true">🌱</div>
+          <p class="fruit-name">do tamanho de</p>
+          <p class="fruit-label" id="fruitLabel">--</p>
+        </div>
+
+        <div class="week-card__stats">
+          <div class="stat">
+            <span class="stat__label">Tamanho</span>
+            <span class="stat__value"><span id="weekSize">--</span><em>cm</em></span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Peso</span>
+            <span class="stat__value"><span id="weekWeight">--</span><em>g</em></span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Trimestre</span>
+            <span class="stat__value"><span id="trimesterNum">--</span><em>de 3</em></span>
+          </div>
+        </div>
+      </div>
+
+      <p class="week-card__desc" id="weekDescription">Defina a data prevista para começar a acompanhar.</p>
+
+      <div class="week-card__tip" id="weekTipWrap" hidden>
+        <span class="week-card__tip-label">Dica da semana</span>
+        <p id="weekTip">--</p>
+      </div>
+    </section>
+
+    <!-- Progress card -->
+    <section class="card stats-card reveal" data-delay="120">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-item__num" id="weeksDone">--</span>
+          <span class="stat-item__label">semanas completas</span>
+        </div>
+        <div class="stat-item stat-item--accent">
+          <span class="stat-item__num"><span id="percent">--</span><em>%</em></span>
+          <span class="stat-item__label">do caminho</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-item__num" id="weeksLeft">--</span>
+          <span class="stat-item__label">semanas restantes</span>
+        </div>
+      </div>
+      <div class="bar-track" aria-label="Progresso da gravidez">
+        <div id="barFill" class="bar-fill"></div>
+      </div>
+    </section>
+
+    <!-- Tab navigation -->
+    <nav class="tabs reveal" data-delay="160">
+      <button class="tab is-active" data-tab="milestones">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        Marcos
+      </button>
+      <button class="tab" data-tab="partner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Parceiro
+        <span class="tab__lock" data-premium-lock hidden>🔒</span>
+      </button>
+      <button class="tab" data-tab="journal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        Diário
+        <span class="tab__lock" data-premium-lock hidden>🔒</span>
+      </button>
+    </nav>
+
+    <!-- Tab content: Milestones -->
+    <section class="tab-content is-active" data-tab-content="milestones">
+      <div class="milestones-list" id="milestonesList"></div>
+    </section>
+
+    <!-- Tab content: Partner messages -->
+    <section class="tab-content" data-tab-content="partner">
+      <div class="card partner-card">
+        <div class="card__head">
+          <p class="card__kicker">Mensagem do parceiro</p>
+          <h2 class="card__title">
+            <span id="partnerHeading">Para você</span>
+          </h2>
+        </div>
+        <p class="partner-card__intro">
+          Este espaço é exclusivo. Aqui o parceiro pode deixar mensagens semanais que ficam guardadas pra sempre.
+        </p>
+
+        <form id="partnerForm" class="partner-form">
+          <textarea id="partnerInput" placeholder="Escreva uma mensagem para esta semana..." maxlength="600" rows="4"></textarea>
+          <div class="partner-form__actions">
+            <span class="partner-form__count"><span id="partnerCount">0</span>/600</span>
+            <button type="submit" class="btn btn--primary">Salvar</button>
+          </div>
+        </form>
+
+        <div class="partner-list" id="partnerList"></div>
+      </div>
+    </section>
+
+    <!-- Tab content: Journal -->
+    <section class="tab-content" data-tab-content="journal">
+      <div class="card journal-card">
+        <div class="card__head">
+          <p class="card__kicker">Diário pessoal</p>
+          <h2 class="card__title">Como você está hoje?</h2>
+        </div>
+
+        <form id="journalForm" class="journal-form">
+          <div class="mood-select">
+            <button type="button" class="mood" data-mood="happy">😊 Feliz</button>
+            <button type="button" class="mood" data-mood="tired">😴 Cansada</button>
+            <button type="button" class="mood" data-mood="excited">🤗 Animada</button>
+            <button type="button" class="mood" data-mood="anxious">😟 Ansiosa</button>
+            <button type="button" class="mood" data-mood="grateful">🙏 Grata</button>
+            <button type="button" class="mood" data-mood="emotional">🥺 Emotiva</button>
+          </div>
+          <textarea id="journalInput" placeholder="Como foi seu dia? Algum movimento novo? Sintoma? Sentimento?" maxlength="800" rows="4"></textarea>
+          <div class="journal-form__actions">
+            <span class="journal-form__count"><span id="journalCount">0</span>/800</span>
+            <button type="submit" class="btn btn--primary">Salvar entrada</button>
+          </div>
+        </form>
+
+        <div class="journal-list" id="journalList"></div>
+      </div>
+    </section>
+
+    <!-- Daily reflection -->
+    <section class="reflection reveal" data-delay="240">
+      <p class="reflection__text" id="reflection">…</p>
+    </section>
+
+    <footer class="app-footer">
+      <p>Floresce · Feito com amor por <a href="https://fabytanaia-max.github.io/fabricio-tanaia-site/" target="_blank" rel="noreferrer">Fabrício Tanaia</a></p>
+      <p class="app-footer__version">v2.0 · <button id="aboutBtn" class="link">Sobre</button></p>
+    </footer>
+  </main>
+
+  <!-- ============================================================
+       SETTINGS MODAL
+       ============================================================ -->
+  <dialog id="settingsModal" class="modal">
+    <div class="modal__inner">
+      <header class="modal__head">
+        <h2>Configurações</h2>
+        <button class="icon-btn modal__close" data-close-modal aria-label="Fechar">✕</button>
+      </header>
+
+      <div class="modal__body">
+        <label class="field">
+          <span>Nome do bebê</span>
+          <input id="setBabyName" type="text" maxlength="32" />
+        </label>
+        <label class="field">
+          <span>Data prevista (DPP)</span>
+          <input id="setDueDate" type="date" />
+        </label>
+        <label class="field">
+          <span>Seu nome</span>
+          <input id="setMomName" type="text" maxlength="32" />
+        </label>
+        <label class="field">
+          <span>Nome do parceiro</span>
+          <input id="setPartnerName" type="text" maxlength="32" />
+        </label>
+
+        <div class="modal__divider"></div>
+
+        <div class="premium-status" id="premiumStatus">
+          <div class="premium-status__head">
+            <span class="badge badge--gold" id="premiumBadge" hidden>★ Premium ativo</span>
+            <span class="badge badge--neutral" id="freeBadge">Modo gratuito</span>
+          </div>
+          <p class="premium-status__text" id="premiumText">
+            Algumas funcionalidades (parceiro, diário ilimitado) são exclusivas do modo Premium.
+          </p>
+          <button id="activatePremiumBtn" class="btn btn--ghost btn--sm">
+            Tenho um código
+          </button>
+          <a href="#" id="buyPremiumLink" class="btn btn--primary btn--sm" hidden>
+            Conhecer o Floresce Premium
+          </a>
+        </div>
+
+        <div class="modal__divider"></div>
+
+        <button id="resetBtn" class="btn btn--danger btn--sm">
+          Resetar todos os dados
+        </button>
+      </div>
+
+      <div class="modal__actions">
+        <button class="btn btn--ghost" data-close-modal>Cancelar</button>
+        <button id="saveSettingsBtn" class="btn btn--primary">Salvar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============================================================
+       PREMIUM ACTIVATION MODAL
+       ============================================================ -->
+  <dialog id="activateModal" class="modal modal--sm">
+    <div class="modal__inner">
+      <header class="modal__head">
+        <h2>Ativar Premium</h2>
+        <button class="icon-btn modal__close" data-close-modal aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal__body">
+        <p>Insira o código de ativação que recebeu na compra:</p>
+        <label class="field">
+          <input id="licenseKey" type="text" placeholder="Ex.: FLOR-XXXX-XXXX" autocomplete="off" />
+        </label>
+        <p id="licenseFeedback" class="feedback" hidden></p>
+      </div>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" data-close-modal>Cancelar</button>
+        <button id="confirmLicenseBtn" class="btn btn--primary">Ativar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============================================================
+       PAYWALL MODAL
+       ============================================================ -->
+  <dialog id="paywallModal" class="modal">
+    <div class="modal__inner">
+      <button class="icon-btn modal__close modal__close--floating" data-close-modal aria-label="Fechar">✕</button>
+      <div class="modal__body paywall">
+        <span class="badge badge--gold">★ Floresce Premium</span>
+        <h2 class="paywall__title">
+          Desbloqueie a <em>experiência completa.</em>
+        </h2>
+        <p class="paywall__lead">
+          Continue grátis com o essencial, ou eleve cada semana com recursos pensados para mães de primeira viagem.
+        </p>
+
+        <ul class="paywall__features">
+          <li>
+            <strong>📔 Diário ilimitado</strong>
+            <span>Registre todos os dias, com humor e contexto.</span>
+          </li>
+          <li>
+            <strong>💌 Mensagens do parceiro</strong>
+            <span>Espaço único pra ele guardar palavras semana após semana.</span>
+          </li>
+          <li>
+            <strong>🌟 Marcos detalhados</strong>
+            <span>Todos os 21 marcos da gestação com explicações.</span>
+          </li>
+          <li>
+            <strong>📚 Acesso ao ebook</strong>
+            <span>Inclui o "Guia da Mãe de Primeira Viagem" completo.</span>
+          </li>
+          <li>
+            <strong>♾️ Sem propagandas</strong>
+            <span>Nunca. Aqui é só você e seu bebê.</span>
+          </li>
+        </ul>
+
+        <div class="paywall__cta">
+          <a href="https://pay.kiwify.com.br/RiHKVCp" class="btn btn--primary btn--lg" target="_blank" rel="noreferrer">
+            Quero o Premium
+          </a>
+          <button class="link" id="haveCodeBtn">Já tenho um código →</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============================================================
+       ABOUT MODAL
+       ============================================================ -->
+  <dialog id="aboutModal" class="modal modal--sm">
+    <div class="modal__inner">
+      <header class="modal__head">
+        <h2>Sobre o Floresce</h2>
+        <button class="icon-btn modal__close" data-close-modal aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal__body">
+        <p>
+          O <strong>Floresce</strong> nasceu enquanto eu acompanhava minha esposa na primeira gestação.
+          Cada semana trazia uma descoberta — e eu queria um lugar bonito pra guardar tudo.
+        </p>
+        <p>
+          É um app local-first: tudo fica no seu dispositivo, sem conta, sem servidor, sem rastreio.
+        </p>
+        <p>
+          Foi criado com cuidado, e segue sendo melhorado com base no feedback de quem usa.
+        </p>
+        <p class="muted">
+          — Fabrício Tanaia<br />
+          <a href="https://www.instagram.com/fabriciotanaia/" target="_blank" rel="noreferrer">@fabriciotanaia</a>
+        </p>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="./app.js?v=2"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
