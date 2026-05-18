@@ -1096,6 +1096,53 @@ h1, h2, h3, h4 {
   margin-right: auto;
   line-height: 1.6;
 }
+.paywall__price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  margin: 0 auto 2rem;
+  max-width: 280px;
+  background: linear-gradient(180deg, rgba(212, 169, 110, 0.08), rgba(212, 169, 110, 0.02));
+  border: 1px solid rgba(212, 169, 110, 0.25);
+  border-radius: var(--r-lg);
+}
+.paywall__price-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+.paywall__price-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-family: "Fraunces", serif;
+  font-weight: 500;
+}
+.paywall__price-currency {
+  font-size: 1.4rem;
+  color: var(--gold-300);
+  font-weight: 400;
+}
+.paywall__price-amount {
+  font-size: 4rem;
+  line-height: 1;
+  background: linear-gradient(180deg, var(--ink-0), var(--gold-300));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.04em;
+}
+.paywall__price-meta {
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  font-style: italic;
+  font-family: "Fraunces", serif;
+  text-align: center;
+}
 .paywall__features {
   text-align: left;
   display: flex;
