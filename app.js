@@ -53,7 +53,14 @@ function saveState() {
 }
 
 function hasInitialData() {
-  return Boolean(state.dueDate && state.babyName);
+  // Tolerante: basta ter dueDate. babyName tem fallback "Bebê" no submit.
+  const ok = Boolean(state.dueDate);
+  if (!ok) {
+    console.info("[Floresce] Sem dueDate guardado — mostrando onboarding.", { state });
+  } else {
+    console.info("[Floresce] Dados encontrados:", { dueDate: state.dueDate, babyName: state.babyName });
+  }
+  return ok;
 }
 
 // ============================================================
@@ -549,6 +556,16 @@ function bindOnboarding() {
     state.partnerName = els.onbPartnerName.value.trim();
     state.createdAt = new Date().toISOString();
     saveState();
+
+    // Verificar se realmente salvou
+    const verify = localStorage.getItem(STORAGE_KEY);
+    if (!verify) {
+      alert("Não foi possível guardar os teus dados. Verifica se o navegador está em modo privado ou tem espaço de armazenamento.");
+      console.error("[Floresce] FALHA: localStorage está vazio após saveState");
+      return;
+    }
+    console.info("[Floresce] Dados guardados com sucesso.");
+
     showApp();
     renderAll();
   });
